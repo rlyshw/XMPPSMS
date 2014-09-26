@@ -1,0 +1,11 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+
+    <string name="app_name">XMPPSMS</string>
+    <string name="hello_world">SUCK IT</string>
+    <string name="action_settings">Settings</string>
+    <string name="ref">This is a reference</string>
+    <string name="title_activity_display_message">My Message</string>
+    <string name="title_activity_sms">SMSActivity</string>
+
+</resources>
