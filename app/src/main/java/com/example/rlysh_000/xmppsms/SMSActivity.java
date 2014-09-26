@@ -30,6 +30,7 @@ public class SMSActivity extends BroadcastReceiver {
         if(intent.getAction().equals(ACTION)){
             StringBuilder sb = new StringBuilder();
             Bundle bundle = intent.getExtras();
+            String sender = null;
             if(bundle != null){
                 SmsMessage[] messages = Telephony.Sms.Intents.getMessagesFromIntent(intent);
                 for(SmsMessage currentMessage : messages) {
@@ -38,7 +39,6 @@ public class SMSActivity extends BroadcastReceiver {
                     String[] projection = new String[]{ContactsContract.PhoneLookup.DISPLAY_NAME, ContactsContract.PhoneLookup._ID};
                     Log.d(LOG_TAG, "[SMSApp] Almost worked!");
                     Cursor cursor = context.getContentResolver().query(uri, projection, null, null, null, null);
-                    String sender = null;
                     try {
                         while (cursor.moveToNext()) {
                             sender = cursor.getString(cursor.getColumnIndexOrThrow(ContactsContract.PhoneLookup.DISPLAY_NAME)) + ": ";
@@ -48,7 +48,9 @@ public class SMSActivity extends BroadcastReceiver {
                     }
                     sb.append(currentMessage.getDisplayMessageBody());
                     try {
-                        chat.sendMessage(sender+currentMessage.getDisplayMessageBody());
+                        if(sender!=null) {
+                            chat.sendMessage(sender + currentMessage.getDisplayMessageBody());
+                        }
                     } catch (XMPPException e) {
                         e.printStackTrace();
                     } catch (SmackException.NotConnectedException e) {

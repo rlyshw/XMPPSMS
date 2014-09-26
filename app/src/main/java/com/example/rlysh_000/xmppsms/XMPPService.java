@@ -1,6 +1,7 @@
 package com.example.rlysh_000.xmppsms;
 
 import android.app.IntentService;
+import android.app.Notification;
 import android.content.Intent;
 import android.net.Uri;
 import android.telephony.SmsManager;
@@ -23,6 +24,10 @@ public class XMPPService extends IntentService {
 
     @Override
     protected void onHandleIntent(Intent intent) {
+
+        //dunno what this method does exactly but it should keep this service from dying
+        startForeground(1,new Notification());
+
         String dataString = intent.getDataString();
         new AsyncLogin().execute();
         XmppTask.chat = ChatManager.getInstanceFor(XmppTask.connection).createChat(Uri.parse(dataString).getQueryParameter("u")+"@rlyshw.com", new MessageListener() {
