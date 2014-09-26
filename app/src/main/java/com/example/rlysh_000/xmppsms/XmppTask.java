@@ -17,9 +17,14 @@ import java.io.IOException;
  * This creates the initial connection to the server, it must be Asynced
  */
 public class XmppTask extends AsyncTask {
+    /* Async task just to connect to the XMPP server, rlyshw.com */
+
+    //Connect to rlyshw.com, port 5222
     public static ConnectionConfiguration config = new ConnectionConfiguration("rlyshw.com",5222,"rlyshw.com");
     public static XMPPConnection connection= new XMPPTCPConnection(config);
+    //Also declare the chat variable here, for some reason.
     public static Chat chat;
+
 
     @Override
     protected Object doInBackground(Object[] objects) {

@@ -20,30 +20,47 @@ import java.util.concurrent.ExecutionException;
 
 
 public class registerUser extends Activity {
-    public static String uPassword;
-    String authFile = "authFile";
-    TextView display;
+    /*
+    This Activity handles registering the user with the server. This user is what the desktop XMPP
+    client will use to recieve texts. It is not really needed by the application, outside of sending
+     a register request to the server
+     */
+    public static String uPassword; //determine if this needs to or should exist
+    String authFile = "authFile"; //Do I really need an authfile????
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
+        // get user's phone number
+        // I couldn't figure out how to make the phone number public static in one file
         TelephonyManager tMgr = (TelephonyManager) getApplicationContext().getSystemService(Context.TELEPHONY_SERVICE);
         String mPhoneNumber = tMgr.getLine1Number();
         super.onCreate(savedInstanceState);
-        setContentView(R.layout.register);
-        display = (TextView) findViewById(R.id.userName);
-        display.setText(mPhoneNumber + "@rlyshw.com");
+        setContentView(R.layout.register); // Change to the register layout
+        TextView display = (TextView) findViewById(R.id.userName); //Get the userName TextView
+        display.setText(mPhoneNumber + "@rlyshw.com"); // Change it to mPhoneNumber@rlyshw.com
     }
 
     public void createUser(View view) throws ExecutionException, InterruptedException, IOException {
+        // I use this decleration like 8 separate times.
         TelephonyManager tMgr = (TelephonyManager) getApplicationContext().getSystemService(Context.TELEPHONY_SERVICE);
-        String mPhoneNumber = tMgr.getLine1Number();
+        String mPhoneNumber = tMgr.getLine1Number(); //Should really figure out how to make ONE public static mPhoneNumber
+        // Need to not use file operations in this app
         FileOutputStream fos = openFileOutput(authFile, Context.MODE_PRIVATE);
         EditText passwordField = (EditText) findViewById(R.id.userPassword);
         uPassword = passwordField.getText().toString();
-        Log.d("PASSWORD: ",uPassword);
+        Log.d("PASSWORD: ",uPassword); //Debug purposes
+
+        //This is important. It calls the AsyncTask to register the new
+        // user with password uPassword, mPhoneNumber@rlyshw.com
+        // This will be the user's credentials for connecting to the xmpp server
         AsyncTask<String, Integer, Boolean> register = new CreateUser().execute(mPhoneNumber, uPassword);
+
         try {
+            // register.get() returns True when the CreateUser task completes successfully
             if(register.get()){
+                // Write that password to a file.
+                // MyActivity uses this file to check if the account exists on the server.
+                // This is not the right way to check if the account exists on the server.
                 fos.write(uPassword.getBytes());
                 fos.close();
             }
@@ -55,6 +72,8 @@ public class registerUser extends Activity {
     }
 
     public void startXMPP(View view) throws IOException, URISyntaxException {
+        // This is called when the button is pressed
+        // Essentially restarts the program
         Intent intent = new Intent(this, MyActivity.class);
         startActivity(intent);
     }

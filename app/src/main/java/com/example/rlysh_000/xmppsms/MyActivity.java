@@ -16,18 +16,19 @@ import java.io.FileInputStream;
 import java.io.FileNotFoundException;
 import java.io.IOException;
 
-// the launched activity
+// the launched(main) activity
 public class MyActivity extends Activity {
-    TextView display;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
+        // TelephonyManager is the class that includes telephony information
         TelephonyManager tMgr = (TelephonyManager) this.getSystemService(Context.TELEPHONY_SERVICE);
-        String mPhoneNumber = tMgr.getLine1Number();
-        String authFile = "authFile";
-        String password = null;
-        new XmppTask().execute();
-        try {
+        String mPhoneNumber = tMgr.getLine1Number(); // Get the number of line1, the user's cell phone number
+        String authFile = "authFile"; // This file holds the user's password
+        String password = null; // Initialize the password variable
+        new XmppTask().execute(); // Connect to the Xmpp Server
+        try { // Read the password from authFile
+            // todo: Don't use an authFile
             FileInputStream fis = openFileInput(authFile);
             password = IOUtils.toString(fis);
             fis.close();
@@ -37,15 +38,31 @@ public class MyActivity extends Activity {
             e.printStackTrace();
         }
         super.onCreate(savedInstanceState);
+
+        // if password exists, launch the service
         if(password!=null){
+            /*
+            This might not be the best way to handle user auth.
+            Checking if user exists should take place on the server.
+            The actual register user password is NOT needed by this app.
+            The password is for the XMPP client on the user's computer.
+            Therefore there is no need to write it to a file.
+
+            I was tired when I wrote that auth system. It's unnecessary.
+            The best way would be to just ask the server if mPhoneNumber@lryshw.com exists
+             */
+
+            //Create the intent to send to the XMPPService
             Intent xmppServiceIntent = new Intent(this, XMPPService.class);
+            //Send the dataStream as a uri (?u=phoneNumber&p=password)
             xmppServiceIntent.setData(Uri.parse("?u=" + mPhoneNumber + "&p=" + password));
-            this.startService(xmppServiceIntent);
-            setContentView(R.layout.main);
-            display = (TextView) findViewById(R.id.userName);
-            display.setText(mPhoneNumber + "@rlyshw.com");
+
+            this.startService(xmppServiceIntent); // Start the XMPPService
+            setContentView(R.layout.main); //Show the main view
+            TextView display = (TextView) findViewById(R.id.userName); // find the userName textView in the main layout
+            display.setText(mPhoneNumber + "@rlyshw.com"); // set it to mPhoneNumber@rlyshw.com
         }
-        else{
+        else{ //If the user has not initialized a password (i.e. never run the app before), take them to the register screen
             Intent intent = new Intent(this, registerUser.class);
             startActivity(intent);
         }

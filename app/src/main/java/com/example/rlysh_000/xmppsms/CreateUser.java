@@ -12,10 +12,20 @@ import org.jivesoftware.smack.XMPPException;
  * ASync task to ask the server to register the new phone
  */
 public class CreateUser extends AsyncTask<String, Integer, Boolean>{
+    /*
+    Anything that connects to the internet should be done in an AsyncTask.
+    This uses the connection established by XmppTask to register the user from registerUser
+     */
+
+    //What a useful little class. This call (annoyingly) differs from what is written in the smack
+    // documentation. They should really get on that. accountManager probably has a method to check
+    // if a user exists on the server. I should use that for useAuth
     public static AccountManager accountManager = AccountManager.getInstance(XmppTask.connection);
+
     @Override
     protected Boolean doInBackground(String... strings) {
         try {
+            // Try to create an account on the server
             accountManager.createAccount(strings[0], strings[1]);
             return true;
         } catch (XMPPException e1) {
