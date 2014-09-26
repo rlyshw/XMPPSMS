@@ -1,57 +1,55 @@
 package com.example.rlysh_000.xmppsms;
 
 import android.app.Activity;
+import android.content.Context;
 import android.content.Intent;
+import android.net.Uri;
 import android.os.Bundle;
+import android.telephony.TelephonyManager;
 import android.view.Menu;
 import android.view.MenuItem;
-import android.view.View;
-import android.widget.Button;
-import android.widget.EditText;
 import android.widget.TextView;
 
-import org.jivesoftware.smack.SmackAndroid;
+import org.apache.commons.io.IOUtils;
 
+import java.io.FileInputStream;
+import java.io.FileNotFoundException;
+import java.io.IOException;
+
+// the launched activity
 public class MyActivity extends Activity {
-    public final static String EXTRA_MESSAGE = "com.example.rlysh_000.xmppsms.MESSAGE";
-    int counter;
-    Button add, sub;
     TextView display;
-
-    public void sendMessage(View view){
-        Intent intent = new Intent(this, DisplayMessageActivity.class);
-        EditText editText = (EditText) findViewById(R.id.edit_message);
-        String message = editText.getText().toString();
-        intent.putExtra(EXTRA_MESSAGE, message);
-        startActivity(intent);
-    }
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
-        SmackAndroid.init(getApplicationContext());
+        TelephonyManager tMgr = (TelephonyManager) this.getSystemService(Context.TELEPHONY_SERVICE);
+        String mPhoneNumber = tMgr.getLine1Number();
+        String authFile = "authFile";
+        String password = null;
         new XmppTask().execute();
+        try {
+            FileInputStream fis = openFileInput(authFile);
+            password = IOUtils.toString(fis);
+            fis.close();
+        } catch (FileNotFoundException e) {
+            e.printStackTrace();
+        } catch (IOException e) {
+            e.printStackTrace();
+        }
         super.onCreate(savedInstanceState);
-        setContentView(R.layout.activity_my);
-        counter = 0;
-        add = (Button) findViewById(R.id.buttonAdd);
-        sub = (Button) findViewById(R.id.buttonSubtract);
-        display = (TextView) findViewById(R.id.what);
-        add.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View view) {
-                counter++;
-                display.setText("Your total is: "+counter);
-            }
-        });
-        sub.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View view) {
-                counter--;
-                display.setText("Your total is: "+counter);
-            }
-        });
+        if(password!=null){
+            Intent xmppServiceIntent = new Intent(this, XMPPService.class);
+            xmppServiceIntent.setData(Uri.parse("?u=" + mPhoneNumber + "&p=" + password));
+            this.startService(xmppServiceIntent);
+            setContentView(R.layout.main);
+            display = (TextView) findViewById(R.id.userName);
+            display.setText(mPhoneNumber + "@rlyshw.com");
+        }
+        else{
+            Intent intent = new Intent(this, registerUser.class);
+            startActivity(intent);
+        }
     }
-
 
     @Override
     public boolean onCreateOptionsMenu(Menu menu) {

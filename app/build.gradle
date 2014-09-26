@@ -23,4 +23,5 @@ dependencies {
     compile fileTree(include: ['*.jar'], dir: 'libs')
     compile files('libs/asmack-android-8-4.0.4.jar')
     compile files('libs/dnsjava-2.1.6.jar')
+    compile files('libs/commons-io-2.4.jar')
 }
