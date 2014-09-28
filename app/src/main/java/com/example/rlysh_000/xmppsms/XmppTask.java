@@ -30,6 +30,7 @@ public class XmppTask extends AsyncTask {
     protected Object doInBackground(Object[] objects) {
         try {
             connection.connect();
+            connection.login("guest","password");
         } catch (SmackException.ConnectionException e) {
             e.printStackTrace();
         } catch (IOException e) {

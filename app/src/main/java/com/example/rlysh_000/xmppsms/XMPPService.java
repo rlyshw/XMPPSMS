@@ -32,7 +32,7 @@ public class XMPPService extends IntentService {
         startForeground(1,new Notification());
 
         String dataString = intent.getDataString(); //get the encoded uri from the service call
-        new AsyncLogin().execute(); //login to the XMPP server, uses account guest:password@rlyshw.com
+        //new AsyncLogin().execute(); //login to the XMPP server, uses account guest:password@rlyshw.com
         //todo: replace login with the user account of the contact that sent the text
         //ie: (sender@rlyshw.com)
 
