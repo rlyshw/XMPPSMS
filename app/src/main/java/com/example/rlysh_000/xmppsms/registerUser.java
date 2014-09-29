@@ -41,7 +41,7 @@ public class registerUser extends Activity {
     }
 
     public void createUser(View view) throws ExecutionException, InterruptedException, IOException {
-        // I use this decleration like 8 separate times.
+        // I use this deceleration like 8 separate times.
         TelephonyManager tMgr = (TelephonyManager) getApplicationContext().getSystemService(Context.TELEPHONY_SERVICE);
         String mPhoneNumber = tMgr.getLine1Number(); //Should really figure out how to make ONE public static mPhoneNumber
         // Need to not use file operations in this app

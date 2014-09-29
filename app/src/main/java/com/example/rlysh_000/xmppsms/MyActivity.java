@@ -27,7 +27,7 @@ public class MyActivity extends Activity {
         String authFile = "authFile"; // This file holds the user's password
         String password = null; // Initialize the password variable
         new XmppTask().execute(); // Connect to the Xmpp Server
-        new checkIfUserExistsTask().execute(this.getApplicationContext());
+        //new checkIfUserExistsTask().execute(this.getApplicationContext()); //Not working yet
         try { // Read the password from authFile
             // todo: Don't use an authFile
             FileInputStream fis = openFileInput(authFile);
